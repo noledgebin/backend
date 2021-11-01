@@ -3,7 +3,7 @@
 Use [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) to install the required packages.
 
 ```bash
-npm -i
+npm i
 ```
 MySQL is needed locally. For installation details view the [MySQL page](https://www.mysql.com/downloads/). After installation you may face [this issue](https://stackoverflow.com/questions/50093144/mysql-8-0-client-does-not-support-authentication-protocol-requested-by-server) 
 
