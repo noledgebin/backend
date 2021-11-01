@@ -55,8 +55,11 @@ app.get("/:pasteId", (req, res) => {
     con.query(SQLQuery, function (err, result, fields) {
         if (err)
             throw err;
-        // Getting the first object as result is an array of objects
-        result = result[0];
+        if (result.length > 0)
+            // Getting the first object as result is an array of objects
+            result = result[0];
+        else
+            result = {};
         // Sending the encrypted paste to the frontend
         res.send(result);
     });
