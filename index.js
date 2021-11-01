@@ -48,7 +48,7 @@ con.connect(function(err) {
 });
 
 
-// Accepting GET requests on this "/pasteId" route which will return object where the pasteId matches the route
+// Accepting GET requests on this "/api/v1/pasteId" route which will return object where the pasteId matches the route
 app.get("/api/v1/:pasteId", (req, res) => {
     // Getting the paste from the database
     const SQLQuery = `SELECT * FROM pastes WHERE id="${req.params.pasteId}"`;
@@ -65,7 +65,7 @@ app.get("/api/v1/:pasteId", (req, res) => {
     });
 });
 
-// Accepting GET requests on this "/" route which will return object where the pasteId matches the route
+// Accepting GET requests on this "/api/v1/" route which will return object where the pasteId matches the route
 app.post("/api/v1/", (req, res) => {
     // Generating a UUID
     const pasteId = uuid.generate();
