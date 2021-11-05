@@ -59,13 +59,13 @@ app.get("/api/v1/:pasteId", (req, res) => {
             // Getting the first object as result is an array of objects
             result = result[0];
         else
-            result = {};
+            result = {}; 
         // Sending the encrypted paste to the frontend
         res.send(result);
     });
 });
 
-// Accepting GET requests on this "/api/v1/" route which will return object where the pasteId matches the route
+// Accepting POST requests on this "/api/v1/" route which will return object where the pasteId matches the route
 app.post("/api/v1/", (req, res) => {
     // Generating a UUID
     const pasteId = uuid.generate();
