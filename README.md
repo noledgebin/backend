@@ -51,7 +51,7 @@ To use the backend without any frontend, we'll use [Postman](https://www.postman
     **A few moments later**\
     ![PasteExpired](https://user-images.githubusercontent.com/88343134/148198719-a78e05c5-1f1d-4f67-b279-c2022a88b933.gif)
 
-- To see all the pastes in the database\
+- To see all the pastes in the database **(Not for end user)**\
     Enter the URL http://localhost:3000/api/AllPastes in get request\
     ![ShowAllPastes](https://user-images.githubusercontent.com/88343134/148203908-2b7a6fca-558c-459c-b13c-1da01153db7e.gif)
 ***
