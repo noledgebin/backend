@@ -16,7 +16,7 @@ Use [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) to 
 First of all , download [MongoDB](https://www.mongodb.com/try/download/community) in your System
 then run the server.js file
 ```bash
-node start
+node server.js
 ```
 
 
@@ -42,14 +42,16 @@ To use the backend without any frontend, we'll use [Postman](https://www.postman
     For more 
     [info](https://stackoverflow.com/questions/18727743/mongodb-ttl-not-removing-documents)
     ***
-- To retereve the paste from the database
+- To retrieve the paste from the database\
     Enter the URL http://localhost:3000/api/:pasteID and make sure its in get request \
     So the mongodb would find the paste if it exists in the collection otherwise it'd return 
     `Paste Not Found`
     ![GettingPaste](https://user-images.githubusercontent.com/88343134/148198699-c6a69de0-e2ee-47bb-97e5-4f1dbe4a82ee.gif)\
-    \
     
     **A few moments later**\
     ![PasteExpired](https://user-images.githubusercontent.com/88343134/148198719-a78e05c5-1f1d-4f67-b279-c2022a88b933.gif)
 
-
+- To see all the pastes in the database\
+    Enter the URL http://localhost:3000/api/AllPastes in get request\
+    ![ShowAllPastes](https://user-images.githubusercontent.com/88343134/148203908-2b7a6fca-558c-459c-b13c-1da01153db7e.gif)
+***
