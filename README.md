@@ -29,7 +29,7 @@ To use the backend without any frontend, we'll use [Postman](https://www.postman
     Since we are passing a json data , check out the `Body` and then check the `Raw` and then select `JSON`
     ![Sending Paste](https://user-images.githubusercontent.com/88343134/148198319-89873fa1-f217-4fe5-9b87-6ef3217ae875.gif)
 
-
+***
 - For storing pastes _(with expiry time)_
     ![PasteWithExpiryDate](https://user-images.githubusercontent.com/88343134/148198554-1e18e511-65e7-49c2-abb1-467d1fde996c.gif)
     For deleting a document automatically after reaching its expiry time , Mongodb has 
