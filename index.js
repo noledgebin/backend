@@ -1,4 +1,4 @@
-const { ToadScheduler, SimpleIntervalJob, Task } = require('toad-scheduler')
+const {ToadScheduler, SimpleIntervalJob, Task} = require('toad-scheduler')
 const express = require('express');
 const mysql = require('mysql');
 // Module to access form data
@@ -17,6 +17,15 @@ app.listen(port, () => {
 
 // Configuring body-parser for accessing form data
 app.use(bodyParser.urlencoded({extended: true}));
+
+// Allows any domain to send requests
+const allowCrossDomain = function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type,      Accept");
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+    next();
+};
+app.use(allowCrossDomain);
 
 // MySQL configuration
 let con = mysql.createConnection({
@@ -54,10 +63,13 @@ con.connect(function (err) {
 app.get("/api/v1/:pasteId", (req, res) => {
     // Getting the paste from the database
     const SQLQuery = `SELECT id, paste FROM pastes WHERE id="${req.params.pasteId}"`;
+
     con.query(SQLQuery, function (err, result, fields) {
-        if (err)
-            throw err;
-        if (result.length > 0)
+        if (err) {
+            res.send("An error occured while parsing your data. Please make sure you have passed a valid id");
+            return;
+        }
+        if (result !== undefined && result.length > 0)
             // Getting the first object as result is an array of objects
             result = result[0];
         else
@@ -89,8 +101,10 @@ app.post("/api/v1/", (req, res) => {
         insertQuery = `INSERT INTO pastes (id, paste, deleteId) VALUES (${con.escape(pasteId)}, ${con.escape(paste)}, ${con.escape(deleteId)})`;
     }
     con.query(insertQuery, function (err, result) {
-        if (err)
-            throw err;
+        if (err) {
+            res.send("Please make sure you have entered valid values");
+            return;
+        }
         console.log("1 record inserted");
         // Creating a JSON with the UUID (ID for the paste)
         const resJSON = {
@@ -101,6 +115,20 @@ app.post("/api/v1/", (req, res) => {
         res.send(resJSON);
     });
 })
+
+// Accepting DELETE requests on this "/api/v1/deleteId" route which delete the paste with deleteId "deleteId"
+app.delete("/api/v1/:deleteId", (req, res) => {
+    // Deleting the paste from the database
+    const SQLQuery = `DELETE FROM pastes WHERE deleteId="${req.params.deleteId}"`;
+    con.query(SQLQuery, function (err, result) {
+        if (err) {
+            res.send("Please make sure you have entered valid values");
+            return;
+        }
+        console.log("1 record deleted");
+    });
+})
+
 // Task to delete pastes that have expired
 const task = new Task(
     // Id for the task
