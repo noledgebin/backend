@@ -50,7 +50,7 @@ con.connect(function (err) {
     // Switching to the database to create table
     con.query("USE pastedb")
     // Creating the table if it doesn't exist
-    const createTableQuery = "CREATE TABLE IF NOT EXISTS pastes (id VARCHAR(64) NOT NULL UNIQUE, paste LONGTEXT CHARACTER SET utf8 NOT NULL, deleteId VARCHAR(64) NOT NULL UNIQUE, expiry DATETIME);";
+    const createTableQuery = "CREATE TABLE IF NOT EXISTS pastes (id VARCHAR(64) NOT NULL UNIQUE, paste LONGTEXT CHARACTER SET utf8 NOT NULL, deleteId VARCHAR(64) NOT NULL UNIQUE, expiry DATETIME, burnAfterRead TINYINT);";
     con.query(createTableQuery, function (err, result) {
         if (err)
             throw err;
@@ -62,16 +62,28 @@ con.connect(function (err) {
 // Accepting GET requests on this "/api/v1/pasteId" route which will return object where the pasteId matches the route
 app.get("/api/v1/:pasteId", (req, res) => {
     // Getting the paste from the database
-    const SQLQuery = `SELECT id, paste FROM pastes WHERE id="${req.params.pasteId}"`;
-
+    const SQLQuery = `SELECT id, paste, burnAfterRead FROM pastes WHERE id="${req.params.pasteId}"`;
     con.query(SQLQuery, function (err, result, fields) {
         if (err) {
             res.send("An error occured while parsing your data. Please make sure you have passed a valid id");
             return;
         }
-        if (result !== undefined && result.length > 0)
+        if (result !== undefined && result.length > 0) {
             // Getting the first object as result is an array of objects
             result = result[0];
+            // Deleting paste if burnAfterRead is true
+            if (result.burnAfterRead) {
+                // Deleting the paste from the database
+                const SQLQuery = `DELETE FROM pastes WHERE id="${result.id}"`;
+                con.query(SQLQuery, function (err, result) {
+                    if (err) {
+                        res.send("Please make sure you have entered valid values");
+                        return;
+                    }
+                    console.log("1 record deleted");
+                });
+            }
+        }
         else
             result = {};
         // Sending the encrypted paste to the frontend
@@ -89,16 +101,18 @@ app.post("/api/v1/", (req, res) => {
     const deleteId = uuid.generate();
     // Getting current date
     const now = new Date();
-    // Getting user expiry date time value in long
+    // Getting expiry date time value in long
     let expiry = Number(req.body.expiry);
+    // Getting boolean burnAfterRead which deletes the
+    let burnAfterRead = Boolean(req.body.burnAfterRead) ? 1 : 0;
     let insertQuery;
     if (expiry !== 0) {
         // Calculating expiration time for paste (i.e. converting long to datetime)
         expiry = new Date(expiry)
         // Query to insert paste with ID as the above generated UUID
-        insertQuery = `INSERT INTO pastes (id, paste, deleteId, expiry) VALUES (${con.escape(pasteId)}, ${con.escape(paste)}, ${con.escape(deleteId)},  ${con.escape(expiry)})`;
+        insertQuery = `INSERT INTO pastes (id, paste, deleteId, expiry, burnAfterRead) VALUES (${con.escape(pasteId)}, ${con.escape(paste)}, ${con.escape(deleteId)},  ${con.escape(expiry)}, ${con.escape(burnAfterRead)})`;
     } else {
-        insertQuery = `INSERT INTO pastes (id, paste, deleteId) VALUES (${con.escape(pasteId)}, ${con.escape(paste)}, ${con.escape(deleteId)})`;
+        insertQuery = `INSERT INTO pastes (id, paste, deleteId, burnAfterRead) VALUES (${con.escape(pasteId)}, ${con.escape(paste)}, ${con.escape(deleteId)}, ${con.escape(burnAfterRead)})`;
     }
     con.query(insertQuery, function (err, result) {
         if (err) {
