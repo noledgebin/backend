@@ -104,7 +104,7 @@ app.post("/api/v1/", (req, res) => {
     // Getting expiry date time value in long
     let expiry = Number(req.body.expiry);
     // Getting boolean burnAfterRead which deletes the
-    let burnAfterRead = Boolean(req.body.burnAfterRead) ? 1 : 0;
+    let burnAfterRead = (req.body.burnAfterRead === 'true') ? 1 : 0;
     let insertQuery;
     if (expiry !== 0) {
         // Calculating expiration time for paste (i.e. converting long to datetime)
