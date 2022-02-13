@@ -1,3 +1,4 @@
+const { response } = require('express');
 const Paste = require('../Model/PasteModel');
 
 
@@ -15,8 +16,11 @@ const AllPaste = (req,res,next)=>{
 //To store the paste in the database
 const store = (req,res,next)=>{
     let newPaste = Paste({  
-        PasteMsg: req.body.PasteMsg,
+        text: req.body.text,
+        compressed : req.body.compressed,
+        syntaxHl : req.body.syntaxHl,
     })
+    console.log(req.body)
     if(req.body.ExpireTime)
     {
         var ExpireTime = req.body.ExpireTime
@@ -24,14 +28,18 @@ const store = (req,res,next)=>{
         var a = new Date(new Date().getTime() + ExpireTime * 1000)
         newPaste.ExpireTime = a;
     }
-    
+    if(req.body.BurnAfterRead)
+    {
+        newPaste.BurnAfterRead = req.body.BurnAfterRead
+    }
     newPaste.save()
     .then((respones)=>{
-        res.json(`Paste Added Successfully and the paste-id is ${newPaste._id}`)
+        res.json(newPaste._id)
     })
     .catch((err)=>{
         res.json(err)
     })
+    // console.log(req,res)
 }
 
 //Retrieving the Paste from the database
@@ -40,8 +48,16 @@ const GetPaste = (req,res,next)=>{
     console.log(PasteID)
     Paste.findById(PasteID)
     .then(response=>{
-        if(response != null)
-        res.json(response)
+        if(response != null){
+            res.json(response)
+            console.log(response.BurnAfterRead);
+            if(response.BurnAfterRead){
+                console.log('Deleting..')
+                Paste.findByIdAndRemove({
+                    "_id": PasteID
+                },(err)=>{console.log(err)})
+            }
+        }
         else
         res.json({
             message: 'Paste Not Found' 
