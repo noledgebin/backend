@@ -19,6 +19,7 @@ const store = (req,res,next)=>{
         text: req.body.text,
         compressed : req.body.compressed,
         syntaxHl : req.body.syntaxHl,
+        passwd : req.body.passwd,
     })
     console.log(req.body)
     if(req.body.ExpireTime)
@@ -32,25 +33,43 @@ const store = (req,res,next)=>{
     {
         newPaste.BurnAfterRead = req.body.BurnAfterRead
     }
+    
     newPaste.save()
     .then((respones)=>{
-        res.json(newPaste._id)
+        res.json(respones._id)
+        // res.json(newPaste._id)
+        console.log(respones._id)
     })
     .catch((err)=>{
         res.json(err)
     })
-    // console.log(req,res)
 }
 
 //Retrieving the Paste from the database
 const GetPaste = (req,res,next)=>{
     let PasteID = req.params['PasteID'];
+    let userGivenPass = req.body
+    console.log(req.body)
     console.log(PasteID)
     Paste.findById(PasteID)
     .then(response=>{
         if(response != null){
-            res.json(response)
+            console.log(response)
+            console.log((response.passwd));
+            console.log(response.passwd != userGivenPass)
+            if (response.passwd) 
+            {
+                if(response.passwd != userGivenPass.passwd)
+                {
+                    console.log("why is this being executed")
+                    return res.json({
+                        error: "Incorrect Password or Paste doens't exist"
+                    })
+                }
+            }
             console.log(response.BurnAfterRead);
+            console.log(response)
+            res.json(response)
             if(response.BurnAfterRead){
                 console.log('Deleting..')
                 Paste.findByIdAndRemove({

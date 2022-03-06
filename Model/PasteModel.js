@@ -16,8 +16,11 @@ const PasteSchema = new Schema({
         type:Boolean
     },
     syntaxHl:{
-        type: Boolean
-    }
+        type: String
+    },
+    passwd :{
+        type : String
+    },
 })
 PasteSchema.index({ 'ExpireTime': 1 }, { expireAfterSeconds: 0 });
 const Paste = mongoose.model('Pastes',PasteSchema)
