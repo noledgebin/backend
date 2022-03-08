@@ -61,7 +61,7 @@ const GetPaste = (req,res,next)=>{
             {
                 if(response.passwd != userGivenPass.passwd)
                 {
-                    console.log("why is this being executed")
+                    
                     return res.json({
                         error: "Incorrect Password or Paste doens't exist"
                     })
